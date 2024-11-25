@@ -3,6 +3,7 @@ import os
 from tkinter import *
 from tkinter.messagebox import *
 from tkinter.filedialog import *
+from fileexplorer import Win95Explorer
 
 class Notepad:
 
@@ -78,20 +79,23 @@ class Notepad:
         showinfo("Notepad","Created by: Ghruank Kothare\n CopyRight 1995 @ Microsoft Corporation")
 
     def __openFile(self):
-        
-        self.__file = askopenfilename(defaultextension=".txt",filetypes=[("All Files","*.*"),("Text Documents","*.txt")])
+            def handle_file_selection(filepath):
+                self.__file = filepath
+                self.__root.title(os.path.basename(self.__file) + " - Notepad")
+                self.__thisTextArea.delete(1.0,END)
+                with open(self.__file,"r") as file:
+                    self.__thisTextArea.insert(1.0,file.read())
 
-        if self.__file == "":
-            self.__file = None
-        else:
-            self.__root.title(os.path.basename(self.__file) + " - Notepad")
-            self.__thisTextArea.delete(1.0,END)
-
-            file = open(self.__file,"r")
-
-            self.__thisTextArea.insert(1.0,file.read())
-
-            file.close()
+            explorer_window = Toplevel(self.__root)
+            explorer = Win95Explorer(explorer_window)
+            
+            # Add a Select button to the explorer
+            select_button = Button(explorer_window, text="Select", command=lambda: [
+                handle_file_selection(os.path.join(explorer.path_entry.get(), 
+                    explorer.file_list.get(explorer.file_list.curselection()[0]).replace("[DIR] ", ""))),
+                explorer_window.destroy()
+            ])
+            select_button.pack(side=BOTTOM, pady=5)
 
         
     def __newFile(self):
@@ -100,23 +104,34 @@ class Notepad:
         self.__thisTextArea.delete(1.0,END)
 
     def __saveFile(self):
-
         if self.__file == None:
-            self.__file = asksaveasfilename(initialfile='Untitled.txt',defaultextension=".txt",filetypes=[("All Files","*.*"),("Text Documents","*.txt")])
+            def handle_save(filepath):
+                try:
+                    with open(filepath,"w") as file:
+                        file.write(self.__thisTextArea.get(1.0,END))
+                    self.__file = filepath
+                    self.__root.title(os.path.basename(self.__file) + " - Notepad")
+                except Exception as e:
+                    messagebox.showerror("Error",f"Cannot save file: {str(e)}")
 
-            if self.__file == "":
-                self.__file = None
-            else:
-                file = open(self.__file,"w")
-                file.write(self.__thisTextArea.get(1.0,END))
-                file.close()
-                self.__root.title(os.path.basename(self.__file) + " - Notepad")
-                
+            explorer_window = Toplevel(self.__root)
+            explorer = Win95Explorer(explorer_window)
             
+            save_frame = Frame(explorer_window)
+            save_frame.pack(side=BOTTOM, fill=X, pady=5)
+            
+            Label(save_frame, text="Filename:").pack(side=LEFT, padx=5)
+            filename_entry = Entry(save_frame)
+            filename_entry.pack(side=LEFT, fill=X, expand=True, padx=5)
+            
+            save_button = Button(save_frame, text="Save", command=lambda: [
+                handle_save(os.path.join(explorer.path_entry.get(), filename_entry.get())),
+                explorer_window.destroy()
+            ])
+            save_button.pack(side=LEFT, padx=5)
         else:
-            file = open(self.__file,"w")
-            file.write(self.__thisTextArea.get(1.0,END))
-            file.close()
+            with open(self.__file,"w") as file:
+                file.write(self.__thisTextArea.get(1.0,END))
 
     def __cut(self):
         self.__thisTextArea.event_generate("<<Cut>>")

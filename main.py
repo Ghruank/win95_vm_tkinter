@@ -10,7 +10,7 @@ import pygame
 class Windows95Clone:
     def __init__(self, root):
         self.root = root
-        self.root.title("Windows 95 Clone")
+        self.root.title("Windows 95")
         pygame.mixer.init()
         try:
             pygame.mixer.music.load("assets/win95.mp3")
@@ -21,8 +21,7 @@ class Windows95Clone:
         self.root.attributes('-fullscreen', True)
         try:
             bg_image = Image.open("assets/background.png")
-            bg_image = bg_image.resize((self.root.winfo_screenwidth(), 
-                                      self.root.winfo_screenheight()-40))
+            bg_image = bg_image.resize((self.root.winfo_screenwidth(), self.root.winfo_screenheight()-40))
             self.bg_photo = ImageTk.PhotoImage(bg_image)
             
             self.desktop = tk.Label(root, image=self.bg_photo)
@@ -74,9 +73,7 @@ class Windows95Clone:
         if self.start_menu is None:
             self.start_menu = tk.Frame(self.root, bg='silver', relief='raised', bd=2)
             
-            side_label = tk.Label(self.start_menu, text="W\nI\nN\nD\nO\nW\nS\n95", 
-                                bg='navy', fg='white', font=('Arial', 10, 'bold'),
-                                width=4, height=4)
+            side_label = tk.Label(self.start_menu, text="W\nI\nN\nD\nO\nW\nS\n\n95", bg='navy', fg='white', font=('Arial', 10, 'bold'), width=4, height=4)
             side_label.pack(side='left', fill='y')
 
             menu_container = tk.Frame(self.start_menu, bg='silver')

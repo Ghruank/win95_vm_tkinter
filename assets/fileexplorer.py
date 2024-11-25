@@ -7,6 +7,7 @@ from tkinter import simpledialog as sd
 from tkinter import messagebox as msg
 from tkinter.ttk import Separator
 import subprocess
+# from notepad import Notepad
 
 class Win95Explorer:
     def __init__(self, root):
@@ -62,7 +63,7 @@ class Win95Explorer:
         sidebar.pack(side=LEFT, fill=Y, padx=(0, 5))
         
         quick_access = [
-            ("Desktop", lambda: self.change_directory("Desktop")),
+            ("C:", lambda: self.change_directory("C:/")),
             ("Documents", lambda: self.change_directory("Documents")),
             ("Downloads", lambda: self.change_directory("Downloads")),
             ("Pictures", lambda: self.change_directory("Pictures")),
@@ -168,15 +169,36 @@ class Win95Explorer:
             self.refresh_file_list()
         else:
             try:
-                if os.name == 'nt':
-                    os.startfile(path)
-                else: 
-                    subprocess.run(["open" if os.name == 'darwin' else "xdg-open", path])
+                if path.lower().endswith('.txt'):
+                    try:
+                        with open(path, "r") as file:
+                            file_content = file.read()
+                            
+                        import importlib
+                        notepad_module = importlib.import_module('notepad')
+                        notepad = notepad_module.Notepad(width=600, height=400)
+                        
+                        notepad._Notepad__thisTextArea.delete(1.0, END)
+                        notepad._Notepad__thisTextArea.insert(1.0, file_content)
+                        notepad._Notepad__file = path
+                        notepad._Notepad__root.title(os.path.basename(path) + " - Notepad")
+                        
+                        notepad.run()
+                    except Exception as e:
+                        msg.showerror("Error", f"Cannot open text file: {str(e)}")
+                else:
+                    if os.name == 'nt':
+                        os.startfile(path)
+                    else:
+                        subprocess.run(["open" if os.name == 'darwin' else "xdg-open", path])
             except Exception as e:
                 msg.showerror("Error", f"Cannot open file: {str(e)}")
 
     def change_directory(self, folder):
-        new_path = os.path.join(os.path.expanduser("~"), folder)
+        if folder.startswith("C:/"):
+            new_path = folder
+        else:
+            new_path = os.path.join(os.path.expanduser("~"), folder)
         self.path_entry.delete(0, END)
         self.path_entry.insert(0, new_path)
         self.refresh_file_list()
