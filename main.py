@@ -13,14 +13,14 @@ class Windows95Clone:
         self.root.title("Windows 95 Clone")
         pygame.mixer.init()
         try:
-            pygame.mixer.music.load("win95.mp3")
+            pygame.mixer.music.load("assets/win95.mp3")
             pygame.mixer.music.play()
         except:
             print("Startup sound file not found")
         
         self.root.attributes('-fullscreen', True)
         try:
-            bg_image = Image.open("background.png")
+            bg_image = Image.open("assets/background.png")
             bg_image = bg_image.resize((self.root.winfo_screenwidth(), 
                                       self.root.winfo_screenheight()-40))
             self.bg_photo = ImageTk.PhotoImage(bg_image)
@@ -36,7 +36,7 @@ class Windows95Clone:
         self.taskbar.pack_propagate(False)
         
         try:
-            start_img = Image.open("start_button.png")
+            start_img = Image.open("assets/start_button.png")
             start_img = start_img.resize((80, 30)) 
             self.start_photo = ImageTk.PhotoImage(start_img)
             self.start_button = tk.Button(self.taskbar, image=self.start_photo,
@@ -136,21 +136,21 @@ class Windows95Clone:
     def launch_notepad(self):
         self.hide_start_menu()
         try:
-            subprocess.Popen(['python', 'notepad.py'])
+            subprocess.Popen(['python', 'assets/notepad.py'])
         except Exception as e:
             tk.messagebox.showerror("Error", f"Could not launch Notepad: {str(e)}")
 
     def launch_file_explorer(self):
         self.hide_start_menu()
         try:
-            subprocess.Popen(['python', 'fileexplorer.py'])
+            subprocess.Popen(['python', 'assets/fileexplorer.py'])
         except Exception as e:
             tk.messagebox.showerror("Error", f"Could not launch File Explorer: {str(e)}")
 
     def launch_terminal(self):
         self.hide_start_menu()
         try:
-            subprocess.Popen(['python', 'terminal.py'])
+            subprocess.Popen(['python', 'assets/terminal.py'])
         except Exception as e:
             tk.messagebox.showerror("Error", f"Could not launch File Explorer: {str(e)}")
 
@@ -164,7 +164,7 @@ class Windows95Clone:
     def launch_calculator(self):
         self.hide_start_menu()
         try:
-            subprocess.Popen(['python', 'calculator.py'])
+            subprocess.Popen(['python', 'assets/calculator.py'])
         except Exception as e:
             tk.messagebox.showerror("Error", f"Could not launch Calculator: {str(e)}")
 
